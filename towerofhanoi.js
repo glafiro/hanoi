@@ -8,12 +8,13 @@ class Shape {
 }
 
 class Disc {
-    constructor(x, y, w, h, c) {
+    constructor(x, y, w, h, c, note) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.c = c;
+        this.note = note;
     }
 }
 
@@ -111,6 +112,7 @@ let discHolders = new Array(3);
 
 // Discs will have alternating colors.
 const COLORS = ["#08286d", "#0e2e9f", "#305fb0", "#4fb0b8", "#99d2e3", "#cce8f1", "#EFE8BA", "#EDEAD5"];
+const NOTES = ["C3", "F3", "G3", "A#3", "C4", "F4", "G4", "C5"];
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -123,6 +125,8 @@ function move(f, t) {
 
 function moveDisc(a, b) {
     let disc = a.removeDisc();
+    monoSynth.setADSR(.1, .1, 0.5, 0.5);
+    monoSynth.play(disc.note, 0.5, 0, 1/8);
     b.addDisc(disc);
 }
 
@@ -137,10 +141,13 @@ function hanoi(n, a, b, c) {
     hanoi(n-1, c, b, a);
 }
 
+let monoSynth;
+
 function setup() {
+    userStartAudio();
     createCanvas(windowWidth, windowHeight);
     background(254, 219, 0);
-    frameRate(10);
+    frameRate(6);
 
     button = createButton('Solve');
     button.position(width / 2 - 60, height - 100);
@@ -155,7 +162,7 @@ function setup() {
             baseYPosition - (DISC_HEIGHT * (i + 1)), 
             baseWidth - (currentOffset * 2), 
             DISC_HEIGHT,
-            COLORS[i]));
+            COLORS[i], NOTES[7 - i]));
     }
 
     discHolders = [
@@ -164,10 +171,10 @@ function setup() {
         new DiscHolder(bases[2], spikes[2], discsArray[2])
     ];
 
-    
-    
     // Solve 
     hanoi(nDiscs, 0, 1, 2);
+
+    monoSynth = new p5.PolySynth();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +199,9 @@ function draw() {
                 rect(borders[j] + currentDiscs[i].x, 
                     currentDiscs[i].y, 
                     currentDiscs[i].w, 
-                    currentDiscs[i].h);
+                    currentDiscs[i].h, 4
+                );
+
             }    
         }
     }
@@ -202,7 +211,7 @@ function draw() {
 
 function drawHolders() {
     for (let i = 0; i < bases.length; i++) {
-        image(baseImage, bases[i].x - 20, bases[i].y);
+        image(baseImage, bases[i].x, bases[i].y);
     }
     
     for (let i = 0; i < spikes.length; i++) {
