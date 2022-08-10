@@ -64,7 +64,9 @@ let height = window.innerHeight
 ////////////////////////////////////////////////////////////////////////////////
 
 let btn;
+let stopBtnl;
 let btnIsPressed = false;
+let stopIsPressed = false;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -150,9 +152,14 @@ function setup() {
     frameRate(6);
 
     button = createButton('Solve');
-    button.position(width / 2 - 60, height - 100);
+    button.position(width / 2 - 130, height - 100);
     button.mousePressed(buttonPressed);
     button.addClass("solve-btn")
+
+    button = createButton('Stop');
+    button.position(width / 2 + 10, height - 100);
+    button.mousePressed(stopPressed);
+    button.addClass("stop-btn")
     
     // Create first array of discs; by default is in the first position.
     for (let i = 0; i < nDiscs; i++) {
@@ -162,7 +169,7 @@ function setup() {
             baseYPosition - (DISC_HEIGHT * (i + 1)), 
             baseWidth - (currentOffset * 2), 
             DISC_HEIGHT,
-            COLORS[i], NOTES[7 - i]));
+            COLORS[i], NOTES[i]));
     }
 
     discHolders = [
@@ -221,4 +228,8 @@ function drawHolders() {
 
 function buttonPressed() {
     btnIsPressed = true;
+}
+
+function stopPressed() {
+    btnIsPressed = false;
 }
